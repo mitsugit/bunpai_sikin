@@ -1,0 +1,100 @@
+{% extends "calculator/base.html" %}
+
+{% block title %} 電卓　{% endblock title %}
+
+{% block content %}
+
+<h1>djangoの加算電卓</h1>
+
+
+<form method= "post" action="test">
+        {% csrf_token %}
+<tr>
+        <td align="center">1</td>
+        <td>
+          <input type="checkbox" name="odds1check">
+        </td>
+        <td>
+          <!--<input type="text" name="vm.list[0].odds" value="" style="ime-mode: disabled;"/>-->
+          <input type="text" name="odds1" value="testvalue1" id="odds1">
+        </td>
+        <td align="right">
+          {{ratio.0}}%
+        </td>
+        <td align="right">{{each_bet.0}}円</td>
+        <td align="right">{{return_list.0}}</td>
+        <td align="right">{{profit_list.0}}円</td>
+        <td align="right"></td>
+        <td></td>
+</tr>
+
+<tr>
+        <td align="center">2</td>
+        <td>
+          <input type="checkbox" name="odds2check" />
+        </td>
+        <td>
+          <input type="text" name="odds2" value="testvalue2" id="odds2">
+        </td>
+        <td align="right">
+          {{ratio.1}}%
+        </td>
+        <td align="right">{{each_bet.1}}円</td>
+        <td align="right">{{return_list.1}}</td>
+        <td align="right">{{profit_list.1}}円</td>
+        <td align="right"></td>
+        <td></td>
+</tr>
+      <button type="submit"> checkboxtest </button>
+      
+</form>
+
+      {{checkbox1}}
+      {{checkbox2}}
+      {{val1}}
+      {{val2}}
+      {{test_list}}
+
+
+
+
+
+
+<form method= "post" action="calc">
+{% csrf_token %}
+
+<input type = "number" name="val1">
++
+<input type = "number" name="val2">
+
+<button type="submit"> = </button>
+
+
+</form>
+
+
+
+<form method= "post" action="calc2">
+{% csrf_token %}
+
+<!-- calc1で計算したanswer を val3に代入  -->
+<input type = "number" value={{answer}} name="val3">
+
+<button type="submit"> multiply </button>
+
+{{answer2}}
+
+</form>
+
+
+<!-- <form method= "post" action="reset">
+{% csrf_token %}
+        
+<button type="submit"> リセット </button>
+        
+</form> -->
+
+
+<li id="menu01"><a href="{% url 'index' %}">リセット</a></li>
+
+{% endblock %}

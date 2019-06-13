@@ -1,0 +1,28 @@
+{% extends "calculator/base.html" %}
+
+{% block title %} 合成オッズ計算　{% endblock title %}
+
+{% block content %}
+
+<h1>合成オッズ計算</h1>
+
+<form method= "post" action="gouseiodds_calc">
+{% csrf_token %}
+
+<input type = "number" name="val1">
+<input type = "number" name="val2">
+<input type = "number" name="val3">
+<input type = "number" name="val4">
+<input type = "number" name="val5">
+
+<button type="submit"> 計算 </button>
+
+{{answer}}
+
+</form>
+
+
+
+<li id="menu01"><a href="{% url 'gouseiodds' %}">リセット</a></li>
+
+{% endblock %}
