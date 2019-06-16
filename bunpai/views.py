@@ -115,6 +115,27 @@ def sikinbunpai(request):
         checkbox4 = ""
         val4 = ""
 
+    try:
+        checkbox5 = request.POST['odds5check']
+        val5 = request.POST['odds5']
+
+        odds_list.append(val5)
+    except:
+        checkbox5 = ""
+        val5 = ""
+
+    try:
+        checkbox6 = request.POST['odds6check']
+        val6 = request.POST['odds6']
+
+        odds_list.append(val6)
+    except:
+        checkbox6 = ""
+        val6 = ""
+
+
+    
+
     budget = request.POST['budget']
     print("budget",budget)
     print("odds_list",odds_list)

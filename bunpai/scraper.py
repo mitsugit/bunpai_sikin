@@ -123,12 +123,12 @@ class NetkeibaSpider:
 
         url2 = race_link
 
-        url3 = self.odds_page(url2)
+        # url3 = self.odds_page(url2)
 
 
         # self.get_info(url3)
 
-        odds_list = self.get_info(url3)
+        odds_list = self.get_info(url2)
 
    
 
@@ -136,31 +136,43 @@ class NetkeibaSpider:
 
         return odds_list
 
-    def odds_page(self,url2):
-        html3 = urllib.request.urlopen(url2)
+    # def odds_page(self,url2):
+    #     html3 = urllib.request.urlopen(url2)
 
-        soup = BeautifulSoup(html3, "html.parser")
+    #     soup = BeautifulSoup(html3, "html.parser")
 
-        odds_page=soup.select('.race_navi_odds')[0].a.get("href")
+    #     odds_page=soup.select('.race_navi_odds')[0].a.get("href")
 
-        url3 = "https://race.netkeiba.com/"+ odds_page
+    #     url3 = "https://race.netkeiba.com/"+ odds_page
 
-        print(url3)
+    #     print(url3)
 
-        return url3
+    #     return url3
 
     
 
 
-    def get_info(self, url3):
-        html3 = urllib.request.urlopen(url3)
+    def get_info(self, url2):
+        # html2 = urllib.request.urlopen(url2)
 
 
-        dfs = pd.read_html(url3,header=0 )
-        tan_odds_list = dfs[0]["予想オッズ"].values.tolist()
+        dfs = pd.read_html(url2,header=1 )
+        tan_odds_list = dfs[0]["単勝オッズ"].values.tolist()
 
+        # if "除外" in tan_odds_list:
+        #     tan_odds_list.remove("除外")
+        # else:
+        #      print("除外なし")
 
+        tan_odds_list = [e for e in tan_odds_list if e  != "除外"]
 
+        print(tan_odds_list)
+
+        # 文字列　→ float型へ
+        tan_odds_list = [float(i) for i in tan_odds_list]
+
+        # 並び替え
+        tan_odds_list.sort()
        
 
         print(tan_odds_list)
