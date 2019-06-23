@@ -123,18 +123,28 @@ class NetkeibaSpider:
 
         url2 = race_link
 
+        url3 = self.shutuba_page(url2)
+
         # url3 = self.odds_page(url2)
 
 
         # self.get_info(url3)
 
-        odds_list = self.get_info(url2)
+        odds_list = self.get_info(url3)
 
    
 
         # print(odds_list)
 
         return odds_list
+
+    def shutuba_page(self,url2):
+        html3 = urllib.request.urlopen(url2)
+        soup = BeautifulSoup(html3, "html.parser")
+        shutuba_page = soup.select(".race_navi_shutuba")[0].a.get("href")
+        url3 = "https://race.netkeiba.com/"+ shutuba_page
+
+        return url3
 
     # def odds_page(self,url2):
     #     html3 = urllib.request.urlopen(url2)
@@ -152,33 +162,77 @@ class NetkeibaSpider:
     
 
 
-    def get_info(self, url2):
+    def get_info(self, url3):
         # html2 = urllib.request.urlopen(url2)
 
 
-        dfs = pd.read_html(url2,header=1 )
-        tan_odds_list = dfs[0]["単勝オッズ"].values.tolist()
+        dfs = pd.read_html(url3,header=1 )
 
-        # if "除外" in tan_odds_list:
-        #     tan_odds_list.remove("除外")
-        # else:
-        #      print("除外なし")
+        # 人気順に並べ替え
+        dfs_order = dfs[0].sort_values(by='人気') 
 
-        tan_odds_list = [e for e in tan_odds_list if e  != "除外"]
+        # 当日、来週等のキー変化に対応させる　
+
+        try:
+            drop_list=dfs_order[dfs_order["単勝オッズ"]=="除外"].index.values.tolist()
+            drop_list=dfs_order[dfs_order["単勝オッズ"]=="取消"].index.values.tolist()
+            odds_type = "単勝オッズ"
+
+        except:
+            pass
+
+        try:
+            if len(dfs_order[dfs_order["予想オッズ"]=="除外"].index.values.tolist()) > 0:
+
+                drop_list=dfs_order[dfs_order["予想オッズ"]=="除外"].index.values.tolist()
+                drop_list=dfs_order[dfs_order["予想オッズ"]=="取消"].index.values.tolist()
+                odds_type = "予想オッズ"
+        except:
+            pass
+
+        try:
+            dfs_order=dfs_order.drop(drop_list)
+        except:
+            pass
+
+        try:
+            tan_odds_list = dfs_order["単勝オッズ"].values.tolist()
+        except:
+            tan_odds_list = dfs_order["予想オッズ"].values.tolist()
+            
+
+
+
+        try:
+            umaban_list = dfs_order["馬番"].values.tolist()
+        except:
+            umaban_list = ["0" for i in range(len(tan_odds_list))]
+
+        ninki_list = dfs_order["人気"].values.tolist()
+
+        # tan_odds_list = [e for e in tan_odds_list if e  != "除外"]
 
         print(tan_odds_list)
+        print(umaban_list)
+        print(ninki_list)
 
+        
+        ninki_list = [int(i) for i in ninki_list]
         # 文字列　→ float型へ
         tan_odds_list = [float(i) for i in tan_odds_list]
+        umaban_list = [int(i) for i in umaban_list]
+      
 
-        # 並び替え
-        tan_odds_list.sort()
+        # # 並び替え
+        # tan_odds_list.sort()
        
 
         print(tan_odds_list)
         
 
-        return tan_odds_list
+        return tan_odds_list,umaban_list,ninki_list
+
+    
 
         
 

@@ -4,53 +4,94 @@
 
 {% block content %}
 
+
 <h1>資金分配</h1>
 <p>
 <li id="menu01"><a href="{% url 'bunpai' %}">リセット</a></li>
 </p>
 <body>
-<form method= "post" action="preload">
+
+
+<form method= "post" action="getkaisaibi">
     {% csrf_token %}
 <p>
 STEP１
 </p>
 
 <p>
-<button type="submit" style="width:100px;height:35px" >開催場読込 </button>
+<button type="submit" style="width:100px;height:35px" >開催日情報取得 </button>
 </form>
 </p>
 
-
-{{kaisaibi_list}}{{kaisai_list}}
-
-
-STEP２
-  <form method= "post" action="select">
-      {% csrf_token %}
-    <select id="Select1" name = "kaisai">
-      <option>---</option>
-      <option>{{kaisai_list.0}}</option>
-      <option>{{kaisai_list.1}}</option>
-      <option>{{kaisai_list.2}}</option>
-
-    </select>
- 
-    <select id="Select2" name = "race">
-        <option>---</option>
-        <option value=10>10R</option>
-        <option value=11>11R</option>
-  
-      </select>
-
-  <button type="submit"> 設定 </button>
-  </form>
-</body>
-
-{{ms}} 
-{{ms2}}
 <p>
-STEP３
+    STEP2
 </p>
+
+<form method= "post" action="get_kaisai">
+    {% csrf_token %}
+<select id="parent" name = "kaisaibi" >
+  {% for i in kaisaibi_list %}
+ 
+  <option>{{i}}</option>
+
+  {% endfor %}
+</select>
+
+
+
+<button type="submit"> 選択 </button>
+</form>
+    
+{{target_kaisaibi}}
+<休憩＞
+
+
+<p>
+    STEP3
+</p>
+
+
+
+<form method= "post" action="select">
+    {% csrf_token %}
+<select id="parent" name = "kaisai">
+  {% for i in kaisai_list %}
+  <option>{{i}}</option>
+  {% endfor %}
+</select>
+
+  <select id="Select2" name = "race">
+    <option>---</option>
+    <option value=1>1R</option>
+    <option value=2>2R</option>
+    <option value=3>3R</option>
+    <option value=4>4R</option>
+    <option value=5>5R</option>
+    <option value=6>6R</option>
+    <option value=7>7R</option>
+    <option value=8>8R</option>
+    <option value=9>9R</option>
+    <option value=10>10R</option>
+    <option value=11>11R</option>
+    <option value=12>12R</option>
+
+  </select>
+  
+
+
+
+<button type="submit"> 選択 </button>
+</form>
+
+{{ms}} {{ms2}}
+
+
+<p>
+STEP４
+
+</p>
+
+
 <form method= "post" action="get_data">
 {% csrf_token %}
 <!-- 開催　隠し -->
@@ -74,35 +115,45 @@ STEP３
 <form method= "post" action="sikinbunpai">
     {% csrf_token %}
 
-<p>
-<td>投資額</td>
-<td><input type ="number"  min="100" step="100" label='予算' value="2000" name="budget" style="font-size: 12pt;"></td>
-</p>
+
 
 <font color="red" size="5">{{errorms1}}</font><br>
 
-STEP４
+STEP５
+<p>
+  <td>投資額</td>
+  <td><input type ="number"  min="100" step="100" label='予算' value="2000" name="budget" style="font-size: 12pt;"></td>
+  </p>
+
 <p>
 <button type="submit" style="width:100px;height:35px" > 資金分配 </button>
 </p>
-<font size="4">{{kaisai}} {{race}} 上位６番人気以内オッズ</font>
+
+
+
+<font size="4">{{kaisai}} {{race}} {{ms7}}</font>
 
     <table border="2"  >
         <tr>
-          <td>No.</td>
+          <td>No.</td>          
           <td>対象</td>
+          <td>馬番</td>
           <td>オッズ</td>
           <td>割合</td>
           <td>購入額</td>
           <td>払戻</td>
           <td>利益</td>
-          <td>実オッズ</td>
+          <td>人気</td>
           <td>備考</td>
         </tr>
         <tr>
             <td align="center">1</td>
+            
             <td>
               <input type="checkbox" name="odds1check">
+            </td>
+            <td>
+            <input type="text" name="umaban1" value="{{umaban_list.0}}" size="3" maxlength="2" style="font-size: 12pt;">
             </td>
             <td>  
               <!--<input type="text" name="vm.list[0].odds" value="" style="ime-mode: disabled;"/>-->
@@ -114,7 +165,7 @@ STEP４
             <td align="right">{{each_bet.0}}円</td>
             <td align="right">{{return_list.0}}円</td>
             <td align="right">{{profit_list.0}}円</td>
-            <td align="right"></td>
+            <td align="right" name="ninki1">{{ninki_list.0}}</td>
             <td></td>
         </tr>
 
@@ -122,6 +173,9 @@ STEP４
             <td align="center">2</td>
             <td>
               <input type="checkbox" name="odds2check" />
+            </td>
+            <td>
+            <input type="text" name="umaban2" value="{{umaban_list.1}}" size="3" maxlength="2" style="font-size: 12pt;">
             </td>
             <td>
               <input type="text" name="odds2" value="{{odds_list.1}}" id="odds2" style="font-size: 12pt;">
@@ -132,13 +186,16 @@ STEP４
             <td align="right">{{each_bet.1}}円</td>
             <td align="right">{{return_list.1}}円</td>
             <td align="right">{{profit_list.1}}円</td>
-            <td align="right"></td>
+            <td align="right" name="ninki2">{{ninki_list.1}}</td>
             <td></td>
           </tr>
             <tr>
             <td align="center">3</td>
             <td>
               <input type="checkbox" name="odds3check" />
+            </td>
+            <td>
+              <input type="text" name="umaban3" value="{{umaban_list.2}}" size="3" maxlength="2" style="font-size: 12pt;">
             </td>
             <td>
               <input type="text" name="odds3" value="{{odds_list.2}}" id="odds3" style="font-size: 12pt;">
@@ -149,13 +206,16 @@ STEP４
             <td align="right">{{each_bet.2}}円</td>
             <td align="right">{{return_list.2}}円</td>
             <td align="right">{{profit_list.2}}円</td>
-            <td align="right"></td>
+            <td align="right" name="ninki3">{{ninki_list.2}}</td>
             <td></td>
           </tr>
             <tr>
             <td align="center">4</td>
             <td>
               <input type="checkbox" name="odds4check" />
+            </td>
+            <td>
+              <input type="text" name="umaban4" value="{{umaban_list.3}}" size="3" maxlength="2" style="font-size: 12pt;">
             </td>
             <td>
               <input type="text" name="odds4" value="{{odds_list.3}}" id="odds4" style="font-size: 12pt;">
@@ -166,13 +226,16 @@ STEP４
             <td align="right">{{each_bet.3}}円</td>
             <td align="right">{{return_list.3}}円</td>
             <td align="right">{{profit_list.3}}円</td>
-            <td align="right"></td>
+            <td align="right" name="ninki4">{{ninki_list.3}}</td>
             <td></td>
           </tr>
             <tr>
             <td align="center">5</td>
             <td>
               <input type="checkbox" name="odds5check" />
+              <td>
+                <input type="text" name="umaban5" value="{{umaban_list.4}}" size="3" maxlength="2" style="font-size: 12pt;">
+              </td>
             </td>
             <td>
               <input type="text" name="odds5" value="{{odds_list.4}}" id="odds5" style="font-size: 12pt;">
@@ -183,13 +246,16 @@ STEP４
             <td align="right">{{each_bet.4}}円</td>
             <td align="right">{{return_list.4}}円</td>
             <td align="right">{{profit_list.4}}円</td>
-            <td align="right"></td>
+            <td align="right" name="ninki5">{{ninki_list.4}}</td>
             <td></td>
           </tr>
             <tr>
             <td align="center">6</td>
             <td>
               <input type="checkbox" name="odds6check" />
+            </td>
+            <td>
+              <input type="text" name="umaban6" value="{{umaban_list.5}}" size="3" maxlength="2" style="font-size: 12pt;">
             </td>
             <td>
               <input type="text" name="odds6" value="{{odds_list.5}}" id="odds6" style="font-size: 12pt;">
@@ -200,22 +266,14 @@ STEP４
             <td align="right">{{each_bet.5}}円</td>
             <td align="right">{{return_list.5}}円</td>
             <td align="right">{{profit_list.5}}円</td>
-            <td align="right"></td>
+            <td align="right" name="ninki6">{{ninki_list.5}}</td>
             <td></td>
           </tr>
 </form>
 
 
 
-
-
-
-
-
-
-
-
-
 {% endblock %}
-<!-- <form method= "post" action="reset">
-{% csrf_token %}
+
+{{target_kaisai_link}}
+
